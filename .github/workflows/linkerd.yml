@@ -1,0 +1,67 @@
+name: .NET Core
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  Build_and_deploy:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run Bicep build
+        uses: aliencube/bicep-build-actions@v0.1
+        with:
+          files: Infrastructure/main.bicep
+
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Create resource group
+        run: |
+          az group create -n 'demoaspnet5aks-rg' -l 'France Central'
+
+      - name: Deploy Azure Resource Manager (ARM) Template
+        uses: azure/arm-deploy@v1
+        id: deploy
+        with:
+          scope: resourcegroup
+          subscriptionId: ${{ secrets.SUBSCRIPTION_ID }}
+          resourceGroupName: demoaspnet5aks-rg
+          template: ./Infrastructure/main.json
+          deploymentMode: Incremental
+
+      - name: Install Linkerd CLI
+        run: |
+          curl -sL https://run.linkerd.io/install | sh
+          export PATH=$PATH:$HOME/.linkerd2/bin
+          linkerd version
+
+      - name: Kubectl get credentials
+        run: |
+          az aks get-credentials -g ${{ steps.deploy.outputs.resourceGroupOutput }} -n ${{ steps.deploy.outputs.aksName }}
+
+      - name: Validate Kubernetes cluster
+        run: |
+          linkerd check --pre
+
+      - name: Install Linkerd on the cluster
+        run: |
+          linkerd install | kubectl apply -f -
+
+      - name: Install the demo application
+        run: |
+          curl -sL https://run.linkerd.io/emojivoto.yml | kubectl apply -f -
+          kubectl get -n emojivoto deploy -o yaml | linkerd inject - | kubectl apply -f -
+
+      - name: Install NGINX
+
+      - name: Apply ingress route
+        run: |
+          #kubectl apply -f ./Kubernetes/ingress.yaml
