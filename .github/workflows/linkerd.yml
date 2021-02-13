@@ -73,8 +73,4 @@ jobs:
 
       - name: Apply ingress route
         run: |
-          # kubectl apply -f ./Kubernetes/ingress.yaml
-
-      - name: Apply ingress route for dashboard
-        run: |
-          # kubectl apply -f ./Kubernetes/ingress-dashboard.yaml
+          kubectl apply -f ./Kubernetes/ingress.yaml
