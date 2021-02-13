@@ -46,10 +46,6 @@ jobs:
         run: |
           az aks get-credentials -g ${{ steps.deploy.outputs.resourceGroupOutput }} -n ${{ steps.deploy.outputs.aksName }}
 
-      - name: Validate Kubernetes cluster
-        run: |
-          $HOME/.linkerd2/bin/linkerd check --pre
-
       - name: Install Linkerd on the cluster
         run: |
           $HOME/.linkerd2/bin/linkerd install | kubectl apply -f -
@@ -70,3 +66,7 @@ jobs:
       - name: Apply ingress route
         run: |
           kubectl apply -f ./Kubernetes/ingress.yaml
+
+      - name: Apply ingress route for dashboard
+        run: |
+          kubectl apply -f ./Kubernetes/ingress-dashboard.yaml
