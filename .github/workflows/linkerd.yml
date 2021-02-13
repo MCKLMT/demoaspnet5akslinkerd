@@ -50,7 +50,7 @@ jobs:
         run: |
           $HOME/.linkerd2/bin/linkerd uninstall | kubectl delete -f -
 
-      - name: Waiting the end of the installation
+      - name: Linkerd check pre
         run: |
           $HOME/.linkerd2/bin/linkerd check --pre
 
@@ -58,7 +58,7 @@ jobs:
         run: |
           $HOME/.linkerd2/bin/linkerd install | kubectl apply -f -
 
-      - name: Waiting the end of the installation
+      - name: Linkerd check
         run: |
           $HOME/.linkerd2/bin/linkerd check
 
@@ -73,8 +73,8 @@ jobs:
 
       - name: Apply ingress route
         run: |
-          kubectl apply -f ./Kubernetes/ingress.yaml
+          # kubectl apply -f ./Kubernetes/ingress.yaml
 
       - name: Apply ingress route for dashboard
         run: |
-          kubectl apply -f ./Kubernetes/ingress-dashboard.yaml
+          # kubectl apply -f ./Kubernetes/ingress-dashboard.yaml
