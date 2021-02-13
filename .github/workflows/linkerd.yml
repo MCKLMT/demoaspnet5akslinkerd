@@ -25,7 +25,7 @@ jobs:
 
       - name: Create resource group
         run: |
-          az group create -n 'demoaspnet5aks-rg' -l 'France Central'
+          az group create -n 'demoaspnet5akslinkerd-rg' -l 'France Central'
 
       - name: Deploy Azure Resource Manager (ARM) Template
         uses: azure/arm-deploy@v1
@@ -61,7 +61,8 @@ jobs:
           kubectl get -n emojivoto deploy -o yaml | linkerd inject - | kubectl apply -f -
 
       - name: Install NGINX
-
+        run: |
+          #install NGINX
       - name: Apply ingress route
         run: |
           #kubectl apply -f ./Kubernetes/ingress.yaml
