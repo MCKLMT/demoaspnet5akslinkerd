@@ -40,8 +40,7 @@ jobs:
       - name: Install Linkerd CLI
         run: |
           curl -sL https://run.linkerd.io/install | sh
-          export PATH=$PATH:$HOME/.linkerd2/bin
-          linkerd version
+          $HOME/.linkerd2/bin/linkerd version
 
       - name: Kubectl get credentials
         run: |
@@ -49,16 +48,16 @@ jobs:
 
       - name: Validate Kubernetes cluster
         run: |
-          linkerd check --pre
+          $HOME/.linkerd2/bin/linkerd check --pre
 
       - name: Install Linkerd on the cluster
         run: |
-          linkerd install | kubectl apply -f -
+          $HOME/.linkerd2/bin/linkerd install | kubectl apply -f -
 
       - name: Install the demo application
         run: |
           curl -sL https://run.linkerd.io/emojivoto.yml | kubectl apply -f -
-          kubectl get -n emojivoto deploy -o yaml | linkerd inject - | kubectl apply -f -
+          kubectl get -n emojivoto deploy -o yaml | $HOME/.linkerd2/bin/linkerd inject - | kubectl apply -f -
 
       - name: Install NGINX
         run: |
