@@ -54,6 +54,10 @@ jobs:
         run: |
           $HOME/.linkerd2/bin/linkerd install | kubectl apply -f -
 
+      - name: Waiting the end of the installation
+        run: |
+          $HOME/.linkerd2/bin/linkerd check
+
       - name: Install the demo application
         run: |
           curl -sL https://run.linkerd.io/emojivoto.yml | kubectl apply -f -
